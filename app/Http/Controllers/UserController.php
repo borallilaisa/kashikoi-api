@@ -46,6 +46,8 @@ class UserController extends Controller
                     'senha'=>'required'
                 ]);
 
+                $total = 1 + 1;
+
                 $aux = User::where('email', $request->email)->get();
 
                 if(count($aux) > 0)

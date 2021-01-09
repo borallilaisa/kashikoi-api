@@ -188,6 +188,28 @@ class UserController extends Controller
 
     }
 
+    public function recuperarSenha(Request $request){
+        try{
+
+            
+
+
+        }catch(\Exception $e) {
+            return abort(500, $e->getMessage());
+        }
+
+    }
+
+    public function toMail($notifiable)
+    {
+        $url = url('/invoice/'.$this->invoice->id);
+
+        return (new MailMessage)
+                    ->greeting('Olá!')
+                    ->line('Você está recebendo esse e-mail por ter solicitado uma recuperação de senha.')
+                    ->action('Clique aqui para recuperar sua senha', $url)
+                    ->line('Para mais dúvidas, entre em contato com a equipe Kashikoi.');
+    }
 
     public function uploadPhoto(Request $request){
         try {

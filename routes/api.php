@@ -14,6 +14,7 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::get( '/user/{user}/assuntos',    'UserController@getAssuntosByUser');
     Route::post('/user/salvar-perfil',      'UserController@salvarinfoPerfil');
     Route::post('/user/upload-foto',        'UserController@uploadPhoto');
+    Route::post('/user/recuperar-senha',        'UserController@recuperarSenha');
 
     Route::get( '/assunto',                 'AssuntosController@find');
     Route::get( '/assunto/edit',            'AssuntosController@edit');

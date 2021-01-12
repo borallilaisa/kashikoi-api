@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -46,7 +48,7 @@ class User extends Authenticatable
     }
 
     public function create($data) {
-        
+
         $this->name = @$data['name'] ?: $this->name;
         $this->level = @$data['level'] ?: $this->level;
         $this->email = @$data['email'] ?: $this->email;

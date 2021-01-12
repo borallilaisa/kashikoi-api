@@ -45,6 +45,11 @@ class ChatController extends Controller {
         return json_encode($messages);
     }
 
+    /**
+     * @param Conversas $chat
+     * @param Request $request
+     * @return false|string
+     */
     public function sendMessage(Conversas $chat, Request $request) {
 
         $message = new Mensagem();

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AltertableUsersAddsenhatoken extends Migration
+class AlterTableUsersAddSenhaToken extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AltertableUsersAddsenhatoken extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table){
-            $table->string('senhaToken', 20);
+            $table->string('senhaToken', 100)->nullable();
         });
     }
 
@@ -26,8 +26,8 @@ class AltertableUsersAddsenhatoken extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table){
-            $table->dropForeign(['senhaToken']);
-            
-    });
-    }
+            $table->dropColumn(['senhaToken']);
+                
+        });
+    }   
 }

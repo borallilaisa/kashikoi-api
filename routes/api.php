@@ -13,10 +13,13 @@ Route::post('/user/recuperar-senha-finalizar',        'UserController@recuperarS
 Route::middleware([CheckApiToken::class])->group(function(){
 
     Route::get( '/user/editarusuario',      'UserController@editarusuario');
+    Route::get( '/user/pesquisar',          'UserController@find');
     Route::get( '/user/{user}',             'UserController@getUserById');
     Route::get( '/user/{user}/assuntos',    'UserController@getAssuntosByUser');
     Route::post('/user/salvar-perfil',      'UserController@salvarinfoPerfil');
     Route::post('/user/upload-foto',        'UserController@uploadPhoto');
+    Route::post('/user/deletar-usuario',         'UserController@softDeleteUser');
+    Route::post('/user/desbloquear-usuario',            'UserController@unblockUser');
 
     Route::get( '/assunto',                 'AssuntosController@find');
     Route::get( '/assunto/edit',            'AssuntosController@edit');

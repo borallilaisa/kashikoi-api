@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioPerfil;
+use App\Notifications\RecoverPassword;
 use Keygen;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -36,7 +37,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    
+
         public function store(Request $request) {
 
             try {
@@ -54,7 +55,7 @@ class UserController extends Controller
                     abort(500, "E-mail já utilizado");
 
                 $user = new User();
-                
+
                 $id = Keygen::numeric(10)->generate();
 
                 $data = [
@@ -66,7 +67,7 @@ class UserController extends Controller
                 ];
 
                 $user = new User();
-                
+
                 $user->create($data);
 
                 $usuario_perfil = new UsuarioPerfil();
@@ -81,11 +82,11 @@ class UserController extends Controller
 
                  return json_encode($user);
 
-                
+
             }
             catch(\Exception $e) {
                 return abort(500, $e->getMessage());
-                
+
             }
         }
 
@@ -104,13 +105,13 @@ class UserController extends Controller
             ]);
 
             $user = User::where('email', $request->email)->
-                            where('password', md5($request->senha))->  
+                            where('password', md5($request->senha))->
                             first();
-                            
+
             if($user) {
                 return json_encode($user);
 
-            }          
+            }
             return abort(404, "Usuário não encontrado");
         }
         catch(\Exception $e) {
@@ -131,9 +132,9 @@ class UserController extends Controller
         if($request->token) {
 
             $user = User::where('token', $request->token)
-                            ->with(['usuario_perfil'])                
+                            ->with(['usuario_perfil'])
                             ->first();
-                            
+
             if($user)
                 return json_encode($user);
             else
@@ -145,7 +146,7 @@ class UserController extends Controller
 
     public function salvarinfoPerfil(Request $request) {
         try {
-           
+
             $v = $request->validate([
                 'name' => 'required',
                 'email'=>'required',
@@ -183,7 +184,7 @@ class UserController extends Controller
         }
         catch(\Exception $e) {
             return abort(500, $e->getMessage());
-            
+
         }
 
     }
@@ -191,7 +192,23 @@ class UserController extends Controller
     public function recuperarSenha(Request $request){
         try{
 
-            
+            $user = User::where('email', $request->email)->
+                          first();
+
+
+            if($user) {
+
+                $user->senhaToken = md5(str_shuffle($user->token));
+                $user->save();
+
+                $user->notify(new RecoverPassword());
+
+                return json_encode($user);
+
+            }
+            else {
+                return abort(404, "Não Encontrado");
+            }
 
 
         }catch(\Exception $e) {
@@ -200,16 +217,37 @@ class UserController extends Controller
 
     }
 
-    public function toMail($notifiable)
-    {
-        $url = url('/invoice/'.$this->invoice->id);
+    public function recuperarSenhaFinalizar(Request $request){
+        try{
 
-        return (new MailMessage)
-                    ->greeting('Olá!')
-                    ->line('Você está recebendo esse e-mail por ter solicitado uma recuperação de senha.')
-                    ->action('Clique aqui para recuperar sua senha', $url)
-                    ->line('Para mais dúvidas, entre em contato com a equipe Kashikoi.');
+            $user = User::where('senhaToken', $request->token)->
+                          first();
+
+
+            if($user) {
+
+                $user->password = md5(($request->senha));
+                $user->senhaToken = null;
+                $user->save();
+
+                return json_encode($user);
+
+            }
+            else {
+                return abort(404, "Não Encontrado");
+            }
+
+
+        }catch(\Exception $e) {
+            return abort(500, $e->getMessage());
+        }
+
     }
+
+
+
+
+
 
     public function uploadPhoto(Request $request){
         try {
@@ -217,7 +255,7 @@ class UserController extends Controller
                 abort(500);
             }
             else {
-                
+
                 $user = User::where('token', $request->token)->first();
 
                 $usuario_perfil = UsuarioPerfil::where('userID', $user->id) ->first();
@@ -230,7 +268,7 @@ class UserController extends Controller
 
                 return json_encode($user->load(['usuario_perfil']));
             }
-        }   
+        }
         catch(\Exception $e) {
             return abort(500, $e->getMessage());
         }
@@ -277,19 +315,68 @@ class UserController extends Controller
     }
 
     public function getUserById(User $user, Request $request) {
-    
+
         return json_encode($user->load(['usuario_perfil']));
     }
 
     public function getAssuntosByUser(User $user, Request $request) {
 
         $assuntos = $user->assuntos->load(['assunto']);
-                                
-        if($assuntos) {
-            return json_encode($assuntos);
-        } 
+
+        return $assuntos ? json_encode($assuntos) : json_decode([]);
+
+    }
+
+
+    public function find(Request $request) {
+
+        $q = $request->q;
+
+        $users = User::when($q, function ($query) use ($q) {
+                    return $query->where('name', 'like', "%{$q}%")->
+                            orWhere('email', 'like', "%{$q}%");
+                    })->
+                    withTrashed()->
+                    with(['usuario_perfil'])->get();
+
+        $users = $users ?: [];
+
+        return json_encode($users);
+    }
+
+    public function softDeleteUser(Request $request) {
+
+        $user = User::where('id', $request->id)->first();
+
+        if($user) {
+
+            $user->delete();
+
+            return json_encode($user->load(['usuario_perfil']));
+
+        }
         else {
-            return json_decode([]);
+            return abort(404, "Não Encontrado");
+        }
+
+
+
+    }
+
+    public function unblockUser(Request $request) {
+
+        $user = User::where('id', $request->id)->withTrashed()->first();
+
+        if($user) {
+
+            $user->deleted_at = null;
+            $user->save();
+
+            return json_encode($user->load(['usuario_perfil']));
+
+        }
+        else {
+            return abort(404, "Não Encontrado");
         }
 
     }

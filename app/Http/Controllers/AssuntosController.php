@@ -40,26 +40,29 @@ class AssuntosController extends Controller
     {
         try {
 
+            $this->verificarNaoExiste($request->aprender);
+            $this->verificarNaoExiste($request->ensinar);
+
             $aprender = $this->abstrairArray($request->aprender);
             $ensinar = $this->abstrairArray($request->ensinar);
-           
+
             $user = User::where('token', $request->token)->first();
-            $checkAssuntos = AssuntoUser::where('userID', $user->id)->get();  
-            
+            $checkAssuntos = AssuntoUser::where('userID', $user->id)->get();
+
             if($checkAssuntos && count($checkAssuntos) > 0) {
                 foreach($checkAssuntos as $check) {
                     $check->delete();
                 }
             }
-            
+
             foreach($aprender as $data) {
                 $AssuntoUsers = new AssuntoUser([
                     'userID' => $user->id,
                     'assuntoID' => $data,
-                    'tipo' => 1           
-                    
+                    'tipo' => 1
+
                 ]);
-                
+
                 $AssuntoUsers->save();
             }
 
@@ -69,34 +72,42 @@ class AssuntosController extends Controller
                     'assuntoID' => $data,
                     'tipo' => 2
                 ]);
-                
+
                 $AssuntoUsers->save();
             }
-            
+
             $checkAssuntos = AssuntoUser::where('userID', $user->id)->get();
 
             return json_encode($checkAssuntos);
-        
+
         }
         catch(\Exception $e) {
-                dd($e);
+            return abort(500, $e->getMessage());
+        }
+    }
+
+    public function verificarNaoExiste($array) {
+        $aux = [];
+        foreach($array as $item) {
+            $assunto = Assunto::where('titulo', $item)->get();
+            if(count($assunto) == 0) {
+                $aux_assunto = new Assunto();
+                $aux_assunto->store(['titulo' => $item]);
+            }
         }
     }
 
 
     public static function abstrairArray($array) {
         $assuntos = Assunto::whereIn('titulo', $array)->
-           get();
-            
+                             get();
+
             $aux = [];
 
             foreach($assuntos as $assunto)
                 $aux[] = $assunto->id;
-            
+
             return $aux;
-
-
-
     }
 
     /**
@@ -107,33 +118,33 @@ class AssuntosController extends Controller
      */
     public function find(Request $request) {
         try {
-            
+
             if($request->token) {
-                
+
                 $q = $request->q;
 
                 $assuntos = Assunto::when($q, function($query) use ($q) {
                     $query->where('titulo', 'like', '%'.$q.'%');
                 })->
                 get();
-                                
+
                 if($assuntos) {
                     return json_encode($assuntos);
 
-                }      
+                }
 
             }
             else {
                 return response('Hello World', 404);
             }
-        
+
         }
         catch(\Exception $e) {
 
             return ["message" => $e];
         }
     }
-    
+
 
     public function findAssuntosUser(Request $request) {
         try {
@@ -141,14 +152,14 @@ class AssuntosController extends Controller
                 $user = User::where('token', $request->token)->first();
 
                 $assuntos = $user->assuntos->load(['assunto']);
-                                
+
                 if($assuntos) {
                     return json_encode($assuntos);
-                } 
+                }
                 else {
                     return json_decode([]);
                 }
-    
+
         }
         catch(\Exception $e) {
 

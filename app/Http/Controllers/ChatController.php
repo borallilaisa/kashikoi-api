@@ -65,4 +65,18 @@ class ChatController extends Controller {
         return json_encode($message);
 
     }
+
+    public function listChat(User $user, Request $request) {
+
+        $chats = Conversas::orWhere('usuario_aluno', $user->id)->
+                            orWhere('usuario_professor', $user->id)->
+                            with(['aluno', 'professor', 'assunto', 'mensagens' => function($query) {
+                                return $query->latest()->first();
+                            }])->
+                            get();
+
+        $chats = count($chats) > 0 ? $chats : [];
+
+        return json_encode($chats);
+    }
 }

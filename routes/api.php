@@ -26,9 +26,13 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::get( '/assunto/vinculados',      'AssuntosController@findAssuntosUser');
     Route::post('/assunto/store',           'AssuntosController@store');
 
+    Route::get( '/chat/listar/{user}',                  'ChatController@listChat');
     Route::get( '/chat/abrir/{professor}/{aluno}',      'ChatController@openChat');
     Route::get( '/chat/{chat}/mensagens',               'ChatController@getMessages');
     Route::post('/chat/{chat}/mensagens',               'ChatController@sendMessage');
+
+    Route::get(   '/amizades/listar/{user}',                          'AmizadeController@list');
+    Route::delete('/amizades/{user}/{friend}/desfazer-amizade',       'AmizadeController@unfriend');
 });
 
 

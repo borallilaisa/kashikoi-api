@@ -22,6 +22,13 @@ class Conversas extends Model {
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function assunto() {
+        return $this->hasOne(Assunto::class, 'id', 'idAssunto');
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function mensagens() {

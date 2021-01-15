@@ -125,7 +125,7 @@ class AssuntosController extends Controller
 
                 $assuntos = Assunto::when($q, function($query) use ($q) {
                     $query->where('titulo', 'like', '%'.$q.'%');
-                })->
+                })->withTrashed()->
                 get();
 
                 if($assuntos) {
@@ -136,6 +136,69 @@ class AssuntosController extends Controller
             }
             else {
                 return response('Hello World', 404);
+            }
+
+        }
+        catch(\Exception $e) {
+
+            return ["message" => $e];
+        }
+    }
+/*
+public function getAllAssuntos(Request $request){
+        try{
+            $q = $request->q;
+
+            $assuntos = Assuntos::when($q, function ($query) use ($q) {
+                return $query->where('titulo', 'like', "%{$q}%");
+            });
+
+            $assuntos = $assuntos ?: [];
+
+            return json_encode($assuntos);
+
+        }catch(\Exception $e) {
+
+            return ["message" => $e];
+        }
+}*/
+        public function softdeleteAssunto(Request $request){
+                try{
+
+                    $assunto = Assunto::where('id', $request->id)->first();
+
+                    if($assunto) {
+
+                        $assunto->delete();
+
+                        return json_encode($assunto->load(['assuntos']));
+
+                    }
+                    else {
+                        return abort(404, "Não Encontrado");
+                    }
+
+                }catch(\Exception $e) {
+
+                    return ["message" => $e];
+                }
+        }
+
+    public function approveAssunto(Request $request){
+        try {
+
+            $assunto = Assunto::where('id', $request->id)->first();
+
+            if($assunto) {
+
+                $assunto->status = 1;
+                $assunto->save();
+
+                return json_encode($assunto->load(['assuntos']));
+
+            }
+            else {
+                return abort(404, "Não Encontrado");
             }
 
         }
@@ -166,8 +229,6 @@ class AssuntosController extends Controller
             return ["message" => $e];
         }
     }
-
-
 
 
 

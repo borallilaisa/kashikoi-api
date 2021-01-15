@@ -24,7 +24,11 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::get( '/assunto',                 'AssuntosController@find');
     Route::get( '/assunto/edit',            'AssuntosController@edit');
     Route::get( '/assunto/vinculados',      'AssuntosController@findAssuntosUser');
-    Route::post('/assunto/store',           'AssuntosController@store');
+
+    Route::post('/assunto/store',                        'AssuntosController@store');
+    Route::post('/assunto/liberar-assunto',           'AssuntosController@approveAssunto');
+    Route::post('/assunto/inativar-assunto',           'AssuntosController@softdeleteAssunto');
+    Route::get('/assunto/pesquisar-assunto',           'AssuntosController@find');
 
     Route::get( '/chat/listar/{user}',                  'ChatController@listChat');
     Route::get( '/chat/abrir/{professor}/{aluno}',      'ChatController@openChat');

@@ -17,19 +17,11 @@ class ChatController extends Controller {
      * @param Request $request
      * @return false|string
      */
-    public function openChat(User $professor, User $aluno, Request $request) {
+    public function openChat($hash, Request $request) {
 
-        $conversa = Conversas::where('usuario_aluno', $aluno->id)->
-                               where('usuario_professor', $professor->id)->
-                               where('ativa', 1)->
-                               first();
+        $conversa = Conversas::where('hash', $hash)->first();
 
-        if(!$conversa) {
-            $conversa = new Conversas();
-            $conversa->store($aluno->id, $professor->id, true);
-        }
-
-        $conversa = $conversa->load(['aluno', 'professor']) ?: [];
+        $conversa = $conversa->load(['aluno', 'aluno.usuario_perfil', 'professor', 'professor.usuario_perfil']) ?: [];
 
         return json_encode($conversa);
     }
@@ -58,7 +50,7 @@ class ChatController extends Controller {
 
         $send_message = new SendMessage();
 
-        $channel_event = 'chat-a'.$chat->usuario_aluno.'-p'.$chat->usuario_professor;
+        $channel_event = $chat->hash;
 
         $send_message->callMessage($message, 'chat-channel', $channel_event);
 
@@ -78,5 +70,32 @@ class ChatController extends Controller {
         $chats = count($chats) > 0 ? $chats : [];
 
         return json_encode($chats);
+    }
+
+    /**
+     * @param Request $request
+     * @return false|string
+     */
+    public function newChat(Request $request) {
+
+        $config = $request->all();
+
+        $chat = Conversas::orWhere(function($query) use ($config) {
+                                    return $query->orWhere('usuario_aluno', $config['usuario_aluno'])->
+                                                   orWhere('usuario_professor', $config['usuario_aluno']);
+                               })->
+                               orWhere(function($query) use ($config) {
+                                    return $query->orWhere('usuario_aluno', $config['usuario_professor'])->
+                                                   orWhere('usuario_professor', $config['usuario_professor']);
+                               })->
+                               first();
+
+        if(!$chat) {
+            $chat = new Conversas();
+
+            $chat->store($request->usuario_aluno, $request->usuario_professor, $request->assunto_id, md5($request->usuario_aluno."-".$request->usuario_professor), true);
+        }
+
+        return json_encode($chat);
     }
 }

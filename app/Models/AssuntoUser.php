@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-use App\Model\User;
 use Illuminate\Database\Eloquent\Model;
 
 class AssuntoUser extends Model
@@ -12,7 +11,17 @@ class AssuntoUser extends Model
         'userID', 'assuntoID', 'tipo'
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function assunto() {
         return $this->hasOne(Assunto::class, 'id', 'assuntoID');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function usuario() {
+        return $this->hasOne(User::class, 'id', 'userID');
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Assunto;
+use App\Models\AssuntoUser;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioPerfil;
@@ -244,11 +246,10 @@ class UserController extends Controller
 
     }
 
-
-
-
-
-
+    /**
+     * @param Request $request
+     * @return false|string|void
+     */
     public function uploadPhoto(Request $request){
         try {
             if(!$request->foto) {
@@ -378,6 +379,23 @@ class UserController extends Controller
         else {
             return abort(404, "Não Encontrado");
         }
+
+    }
+
+    /**
+     * @param Assunto $assunto
+     * @param $tipo_assunto
+     * @param Request $request
+     * @return false|string
+     */
+    public function getUserByAssuntos(User $user, Assunto $assunto, $tipo_assunto, Request $request) {
+
+        $assuntos_users = $assunto->assunto_usuarios()->
+                                    where('tipo', $tipo_assunto)->
+                                    where('userID', '<>', $user->id)->
+                                    with(['usuario'])->get();
+
+        return json_encode($assuntos_users);
 
     }
 }

@@ -35,10 +35,12 @@ class Conversas extends Model {
         return $this->hasMany(Mensagem::class, 'idConversa', 'id');
     }
 
-    public function store($id_aluno, $id_professor, $new = false) {
+    public function store($id_aluno, $id_professor, $assunto, $hash, $new = false) {
 
         $this->usuario_aluno = $id_aluno;
         $this->usuario_professor = $id_professor;
+        $this->idAssunto = $assunto;
+        $this->hash = $hash;
         if($new)
             $this->data_inicio = Carbon::now()->format('Y-m-d H:i:s');
 

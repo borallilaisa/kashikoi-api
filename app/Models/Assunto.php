@@ -10,6 +10,13 @@ class Assunto extends Model {
     use Notifiable;
     use SoftDeletes;
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function assunto_usuarios() {
+        return $this->hasMany(AssuntoUser::class, 'assuntoID', 'id');
+    }
+
 
     public function store($array) {
 

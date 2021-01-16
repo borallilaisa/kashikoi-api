@@ -37,6 +37,11 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::post('/chat/novo-chat',                      'ChatController@newChat');
     Route::post('/chat/{chat}/mensagens',               'ChatController@sendMessage');
 
+
+
+    Route::post('/denuncia/enviar-denuncia/{denunciador}/{denunciado}',               'DenunciasController@sendDenuncia');
+
+
     Route::get(   '/amizades/listar/{user}',                          'AmizadeController@list');
     Route::delete('/amizades/{user}/{friend}/desfazer-amizade',       'AmizadeController@unfriend');
 });

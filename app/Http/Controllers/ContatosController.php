@@ -7,27 +7,19 @@ use Illuminate\Http\Request;
 class ContatosController extends Controller
 {
     /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return false|string|void
      */
-
     public function saveContato (Request $request){
         try {
 
+            $contato = new Contato();
 
-                $contato = new Contato([
-                    'email' => $request->id,
-                    'assunto' => $request->assunto,
-                    'mensagem' => $request->mensagem
-
-                ]);
-
-              $contato->store($contato);
-
-
-
+            $contato->store([
+                'email' => $request->email,
+                'assunto' => $request->assunto,
+                'mensagem' => $request->mensagem
+            ]);
 
             return json_encode($contato);
 
@@ -37,5 +29,16 @@ class ContatosController extends Controller
         }
 
 
+    }
+
+
+    public function findContato(Request $request) {
+
+        $q = $request->q;
+
+        $contatos = Contato::when($q, function($query) use ($q){
+            return $query->where('assunto', 'like', "%{$q}%");
+        })->get();
+        return json_encode($contatos);
     }
 }

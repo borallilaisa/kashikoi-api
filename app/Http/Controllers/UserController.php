@@ -334,7 +334,7 @@ class UserController extends Controller
         $q = $request->q;
 
         $users = User::when($q, function ($query) use ($q) {
-                    return $query->where('name', 'like', "%{$q}%")->
+                    return $query->orWhere('name', 'like', "%{$q}%")->
                             orWhere('email', 'like', "%{$q}%");
                     })->
                     withTrashed()->

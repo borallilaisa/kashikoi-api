@@ -6,9 +6,9 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
 
-Route::post('/user/recuperar-senha',        'UserController@recuperarSenha');
-Route::post('/user/recuperar-senha-finalizar',        'UserController@recuperarSenhaFinalizar');
-
+Route::post('/user/recuperar-senha',                'UserController@recuperarSenha');
+Route::post('/user/recuperar-senha-finalizar',      'UserController@recuperarSenhaFinalizar');
+Route::post('/contato/registra-contato',              'ContatosController@saveContato');
 
 Route::middleware([CheckApiToken::class])->group(function(){
 
@@ -37,10 +37,14 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::post('/chat/novo-chat',                      'ChatController@newChat');
     Route::post('/chat/{chat}/mensagens',               'ChatController@sendMessage');
 
+    Route::get( '/contato/pesquisar-contato',                 'ContatosController@findContato');
+    Route::post( '/contato/limpar-contato',                            'ContatosController@softDeleteContato');
+    Route::post( '/contato/responder-contato',                        'ContatosController@sendMessageContato');
 
-
-    Route::post('/denuncia/enviar-denuncia/{denunciador}/{denunciado}',               'DenunciasController@sendDenuncia');
-
+    Route::post('/denuncia/{denuncia}/confirm',                             'DenunciasController@confirmDenuncia');
+    Route::post('/denuncia/{denuncia}/ignore',                             'DenunciasController@ignoreDenuncia');
+    Route::post('/denuncia/enviar-denuncia/{denunciador}/{denunciado}',     'DenunciasController@sendDenuncia');
+    Route::get('/denuncia/pesquisar-denuncias',                             'DenunciasController@listarDenuncias');
 
     Route::get(   '/amizades/listar/{user}',                          'AmizadeController@list');
     Route::delete('/amizades/{user}/{friend}/desfazer-amizade',       'AmizadeController@unfriend');

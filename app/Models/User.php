@@ -43,6 +43,10 @@ class User extends Authenticatable
         return $this->hasOne(UsuarioPerfil::class, 'userID', 'id');
     }
 
+    public function notifications() {
+        return $this->hasMany(Notification::class, 'id_destinatario', 'id');
+    }
+
     public function assuntos() {
         return $this->hasMany(AssuntoUser::class, 'userID', 'id');
     }

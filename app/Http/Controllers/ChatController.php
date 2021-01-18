@@ -98,4 +98,28 @@ class ChatController extends Controller {
 
         return json_encode($chat);
     }
+
+    /**
+     * @param User $friend
+     * @param User $user
+     * @param Request $request
+     * @return false|string
+     */
+    public function startChatByFriend(User $friend, User $user, Request $request) {
+
+        $chat = Conversas::orWhere(function($query) use($friend) {
+                                return $query->orWhere('usuario_aluno', $friend->id)->
+                                orWhere('usuario_professor', $friend->id);
+                            })->
+                            orWhere(function($query) use ($user) {
+                                return $query->orWhere('usuario_aluno', $user->id)->
+                                orWhere('usuario_professor', $user->id);
+                            })->
+                            first();
+
+        $chat = $chat ?: [];
+
+        return json_encode($chat);
+
+    }
 }

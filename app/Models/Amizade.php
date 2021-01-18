@@ -24,7 +24,19 @@ class Amizade extends Model
 
         $this->id_usuario_1 = $id_usuario_1;
         $this->id_usuario_2 = $id_usuario_2;
-        $this->ativo = 1;
+        $this->ativa = 0;
+
+        $this->save();
+    }
+
+    public function activeFirendship() {
+        $this->ativa = 1;
+
+        $this->save();
+    }
+
+    public function refuseFirendship() {
+        $this->ativa = 2;
 
         $this->save();
     }

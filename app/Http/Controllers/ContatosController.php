@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Contato;
+use App\Notifications\ResponderContato;
 use Illuminate\Http\Request;
 
 class ContatosController extends Controller
@@ -40,5 +41,14 @@ class ContatosController extends Controller
             return $query->where('assunto', 'like', "%{$q}%");
         })->get();
         return json_encode($contatos);
+    }
+
+    public function sendMessageContato(Contato $contato, Request $request){
+
+        $contato->notify(new ResponderContato($request->mensagem));
+
+        $contato->delete();
+
+        return json_encode($contato);
     }
 }

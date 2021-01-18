@@ -18,7 +18,6 @@ class Contato extends Model
     use Notifiable;
     use SoftDeletes;
 
-
     public function store($data) {
 
         $this->email = @$data['email'] ?: $this->email;

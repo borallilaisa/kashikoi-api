@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Denuncia;
 use App\Models\User;
+use App\Notifications\AvisarDenunciado;
 use Illuminate\Http\Request;
 
 class DenunciasController extends Controller
@@ -54,6 +55,7 @@ class DenunciasController extends Controller
     public function confirmDenuncia(Denuncia $denuncia, Request $request) {
 
         $denuncia->denunciado->delete();
+        $denuncia->denunciado->notify(new AvisarDenunciado());
 
         $denuncia->delete();
 

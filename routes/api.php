@@ -39,7 +39,7 @@ Route::middleware([CheckApiToken::class])->group(function(){
 
     Route::get( '/contato/pesquisar-contato',                 'ContatosController@findContato');
     Route::post( '/contato/limpar-contato',                            'ContatosController@softDeleteContato');
-    Route::post( '/contato/responder-contato',                        'ContatosController@sendMessageContato');
+    Route::post( '/contato/{contato}/enviar-mensagem',                        'ContatosController@sendMessageContato');
 
     Route::post('/denuncia/{denuncia}/confirm',                             'DenunciasController@confirmDenuncia');
     Route::post('/denuncia/{denuncia}/ignore',                             'DenunciasController@ignoreDenuncia');

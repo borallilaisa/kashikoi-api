@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Assunto;
 use App\Models\AssuntoUser;
+use App\Models\Conversas;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioPerfil;
@@ -348,10 +349,18 @@ class UserController extends Controller
     public function softDeleteUser(Request $request) {
 
         $user = User::where('id', $request->id)->first();
+        $conversas = Conversas::where('usuario_aluno',  $user->id)
+            ->orWhere('usuario_professor',  $user->id)
+            ->get();
 
         if($user) {
 
             $user->delete();
+
+            foreach ($conversas as $conversas) {
+                $conversas->delete();
+            }
+
 
             return json_encode($user->load(['usuario_perfil']));
 

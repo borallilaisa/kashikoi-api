@@ -59,6 +59,7 @@ class DenunciasController extends Controller
 
         $denuncia->delete();
 
+
         return json_encode($denuncia);
 
     }

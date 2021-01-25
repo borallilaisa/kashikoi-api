@@ -62,8 +62,9 @@ Route::middleware([CheckApiToken::class])->group(function(){
 
 
 
-Route::post('/user', 'UserController@store');
-Route::post('/login', 'UserController@login');
+Route::post('/user',                'UserController@store');
+Route::post('/login',               'UserController@login');
+Route::post('/login/token/{token}', 'UserController@loginToken');
 
 
 

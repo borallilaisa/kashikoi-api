@@ -25,4 +25,20 @@ class UsuarioPerfil extends Model {
 
     }
 
+    /**
+     * @param $profile_pic
+     */
+    public function storeProfilePic($profile_pic) {
+        $this->profilePic = $profile_pic;
+        $this->save();
+    }
+
+    public function createFromOAuth($data) {
+
+        $this->userID = @$data['userID'] ?: $this->userID;
+        $this->profilePic = @$this->profilePic ?: @$data['avatar'];
+
+        $this->save();
+    }
+
 }

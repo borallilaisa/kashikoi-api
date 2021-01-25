@@ -18,7 +18,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'token'
+        'name', 'email', 'password', 'token', 'facebook', 'google'
     ];
 
     /**
@@ -58,6 +58,22 @@ class User extends Authenticatable
         $this->email = @$data['email'] ?: $this->email;
         $this->token = @$data['token'] ?: $this->token;
         $this->password = @$data['password'] ?: $this->password;
+
+        $this->save();
+
+    }
+
+    /**
+     * @param $data
+     */
+    public function storeFromOAuth($data) {
+
+        $this->name = @$data['name'] ?: $this->name;
+        $this->level = 1;
+        $this->email = @$data['email'] ?: $this->email;
+        $this->token = @$data['token'] ?: $this->token;
+        $this->facebook = @$data['facebook'] ?: $this->facebook;
+        $this->google = @$data['google'] ?: $this->google;
 
         $this->save();
 

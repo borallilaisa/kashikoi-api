@@ -11,6 +11,7 @@ use App\Notifications\RecoverPassword;
 use Keygen;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Laravel\Socialite\Facades\Socialite;
 
 class UserController extends Controller
 {
@@ -113,6 +114,28 @@ class UserController extends Controller
 
             if($user) {
                 return json_encode($user);
+
+            }
+            return abort(404, "Usuário não encontrado");
+        }
+        catch(\Exception $e) {
+            return abort(500, $e->getMessage());
+        }
+    }
+
+    /**
+     * @param $token
+     * @param Request $request
+     * @return false|string|void
+     */
+    public function loginToken($token, Request $request) {
+
+        try {
+
+            $user = User::where('token', $token)->first();
+
+            if($user) {
+                return json_encode($user->load(['usuario_perfil']));
 
             }
             return abort(404, "Usuário não encontrado");
@@ -405,6 +428,102 @@ class UserController extends Controller
                                     with(['usuario'])->get();
 
         return json_encode($assuntos_users);
+
+    }
+
+    public function facebookLogin(Request $request) {
+
+        return Socialite::driver('facebook')->stateless()->redirect();
+    }
+
+    public function googleLogin(Request $request) {
+
+        return Socialite::driver('google')->stateless()->redirect();
+    }
+
+    public function facebookLoginCallback(Request $request) {
+
+        $OAuthUser = Socialite::driver('facebook')->stateless()->user();
+
+        $user = User::where('email', $OAuthUser->email)->withTrashed()->first();
+
+        if($user) {
+
+            if($user->deleted_at) return redirect(env('KASHIKOI_APP_URL').'/404');
+
+            if($OAuthUser->avatar && !$user->usuario_perfil->profilePic)
+                $user->usuario_perfil->storeProfilePic($user->avatar);
+
+            return redirect(env('KASHIKOI_APP_URL').'/oauth/login/'.$user->token);
+        }
+        else {
+            $user = new User();
+            $user->storeFromOAuth([
+                'name' => $OAuthUser->name,
+                'email' => $OAuthUser->email,
+                'token' => Keygen::numeric(10)->generate(),
+                'facebook' => true
+            ]);
+
+            $usuario_perfil = new UsuarioPerfil();
+
+            $data = [
+                'userID' => $user->id,
+            ];
+
+            if($OAuthUser->avatar)
+                $data['avatar'] = $OAuthUser->avatar;
+
+            $usuario_perfil::unguard();
+
+            $usuario_perfil->createFromOAuth($data);
+
+            return redirect(env('KASHIKOI_APP_URL').'/oauth/login/'.$user->token);
+        }
+
+
+    }
+
+    public function googleLoginCallback(Request $request) {
+
+        $OAuthUser = Socialite::driver('google')->stateless()->user();
+
+        $user = User::where('email', $OAuthUser->email)->withTrashed()->first();
+
+        if($user) {
+
+            if($user->deleted_at) return redirect(env('KASHIKOI_APP_URL').'/404');
+
+            if($OAuthUser->avatar && !$user->usuario_perfil->profilePic)
+                $user->usuario_perfil->storeProfilePic($user->avatar);
+
+            return redirect(env('KASHIKOI_APP_URL').'/oauth/login/'.$user->token);
+        }
+        else {
+            $user = new User();
+            $user->storeFromOAuth([
+                'name' => $OAuthUser->name,
+                'email' => $OAuthUser->email,
+                'token' => Keygen::numeric(10)->generate(),
+                'facebook' => true
+            ]);
+
+            $usuario_perfil = new UsuarioPerfil();
+
+            $data = [
+                'userID' => $user->id,
+            ];
+
+            if($OAuthUser->avatar)
+                $data['avatar'] = $OAuthUser->avatar;
+
+            $usuario_perfil::unguard();
+
+            $usuario_perfil->createFromOAuth($data);
+
+            return redirect(env('KASHIKOI_APP_URL').'/oauth/login/'.$user->token);
+        }
+
 
     }
 }

@@ -56,11 +56,14 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::post('/notificacoes/{notification}/lido',                        'NotificacoesController@lido');
     Route::post('/notificacoes/{notification}/add-amigo/{friendship}',      'NotificacoesController@addFriend');
     Route::post('/notificacoes/{notification}/recusar-amigo/{friendship}',  'NotificacoesController@refuseFriend');
+
+    Route::get('/dashboard/chart/numero-conversa-dia',                  'DashboardController@numeroConversasDia');
+    Route::get('/dashboard/chart/numero-amizade-dia',                   'DashboardController@numeroAmizadesDia');
+    Route::get('/dashboard/chart/numero-usuario-dia',                   'DashboardController@numeroUsuarioDia');
+    Route::get('/dashboard/chart/numero-denuncia-dia',                  'DashboardController@numeroDenunciaDia');
+    Route::get('/dashboard/chart/assuntos-mais-populares',              'DashboardController@assuntosMaisPopulares');
+    Route::get('/dashboard/chart/total-conversas-trimestre',            'DashboardController@totalConversasTrimestre');
 });
-
-
-
-
 
 Route::post('/user',                'UserController@store');
 Route::post('/login',               'UserController@login');

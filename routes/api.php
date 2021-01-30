@@ -14,6 +14,7 @@ Route::middleware([CheckApiToken::class])->group(function(){
 
     Route::get( '/user/editarusuario',                          'UserController@editarusuario');
     Route::get( '/user/pesquisar',                              'UserController@find');
+    Route::get('/user/retorna-score',                           'UserController@retornaScore');
     Route::get( '/user/{user}',                                 'UserController@getUserById');
     Route::get( '/user/{user}/assuntos',                        'UserController@getAssuntosByUser');
     Route::get( '/user/{user}/amigos',                          'AmizadeCOntroller@getAllFriendships');
@@ -30,6 +31,7 @@ Route::middleware([CheckApiToken::class])->group(function(){
 
     Route::post('/assunto/store',                        'AssuntosController@store');
     Route::post('/assunto/liberar-assunto',           'AssuntosController@approveAssunto');
+    Route::post('/assunto/ativar-assunto',           'AssuntosController@reactiveAssunto');
     Route::post('/assunto/inativar-assunto',           'AssuntosController@softdeleteAssunto');
     Route::get('/assunto/pesquisar-assunto',           'AssuntosController@find');
 
@@ -39,6 +41,9 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::post('/chat/novo-chat',                      'ChatController@newChat');
     Route::post('/chat/{chat}/mensagens',               'ChatController@sendMessage');
     Route::post('/chat/amigo/{friend}/{user}',          'ChatController@startChatByFriend');
+    Route::post('/chat/remetente/{remetente}/destinatario/{destinatario}/save-score',       'ChatController@sendScore');
+
+
 
     Route::get( '/contato/pesquisar-contato',                 'ContatosController@findContato');
     Route::post( '/contato/limpar-contato',                            'ContatosController@softDeleteContato');

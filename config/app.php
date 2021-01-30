@@ -225,6 +225,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Keygen' => Keygen\Keygen::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
 
     ],
 

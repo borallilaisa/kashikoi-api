@@ -17,9 +17,8 @@ class CreateScoreUsuarioTable extends Migration
             $table->bigIncrements('id');
             $table->timestamps();
             $table->bigInteger('score');
-            $table->bigInteger('idConversa')->unsigned();
-            $table->bigInteger('idAluno')->unsigned();
-            $table->bigInteger('idProfessor')->unsigned();
+            $table->bigInteger('idDestinatario')->unsigned();
+            $table->bigInteger('idRemetente')->unsigned();
         });
     }
 

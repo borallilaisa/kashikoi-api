@@ -184,6 +184,31 @@ public function getAllAssuntos(Request $request){
                 }
         }
 
+    public function reactiveAssunto(Request $request){
+        try{
+
+
+            $assunto = Assunto::where('id', $request->id)->withTrashed()->first();
+
+            if($assunto) {
+
+
+                $assunto->deleted_at = null;
+                $assunto->save();
+
+                return json_encode($assunto);
+
+            }
+            else {
+                return abort(404, "Não Encontrado");
+            }
+
+        }catch(\Exception $e) {
+
+            return ["message" => $e];
+        }
+    }
+
     public function approveAssunto(Request $request){
         try {
 

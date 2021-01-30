@@ -14,10 +14,9 @@ class AltertableScoreUsuarioAddfk extends Migration
     public function up()
     {
         Schema::table('score_usuario', function (Blueprint $table){
-            $table->foreign('idAluno')->references('id')->on('users');
-            $table->foreign('idProfessor')->references('id')->on('users');
-            $table->foreign('idConversa')->references('id')->on('conversas');
-           
+            $table->foreign('idDestinatario')->references('id')->on('users');
+            $table->foreign('idRemetente')->references('id')->on('users');
+
         });
     }
 
@@ -29,9 +28,8 @@ class AltertableScoreUsuarioAddfk extends Migration
     public function down()
     {
         Schema::table('score_usuario', function (Blueprint $table){
-            $table->dropForeign(['idAluno']);
-            $table->dropForeign(['idProfessor']);
-            $table->dropForeign(['idConversa']);
+            $table->dropForeign(['idDestinatario']);
+            $table->dropForeign(['idRemetente']);
     });
     }
 }

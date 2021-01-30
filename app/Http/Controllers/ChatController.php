@@ -4,10 +4,14 @@
 namespace App\Http\Controllers;
 
 use App\ExternalAPI\Pusher\SendMessage;
+use App\Models\Assunto;
 use App\Models\Conversas;
 use App\Models\Mensagem;
+use App\Models\Score_Usuario;
 use App\Models\User;
+use App\Models\UsuarioPerfil;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller {
 
@@ -55,6 +59,51 @@ class ChatController extends Controller {
         $send_message->callMessage($message, 'chat-channel', $channel_event);
 
         return json_encode($message);
+
+    }
+
+
+
+
+    public function sendScore(User $remetente, User $destinatario, Request $request) {
+
+        $score = Score_Usuario::where('idDestinatario', $destinatario->id)->
+                                where('idRemetente', $remetente->id)->
+                                first();
+
+        $score = $score ?: new Score_Usuario();
+
+        $score->store([
+                'score' => $request->score,
+                'idRemetente'=> $remetente->id,
+                'idDestinatario'=> $destinatario->id
+            ]
+        );
+
+
+        $scoreNew = Score_Usuario::select(DB::raw('ROUND(SUM(score) / COUNT(id)) AS media' ))->
+                                      where('idDestinatario', '=', $destinatario->id)->
+                                      first();
+
+
+
+        $usuario = UsuarioPerfil::where('userID', $destinatario->id)->first();
+
+        if($usuario) {
+
+           $usuario->score = $scoreNew->media;
+
+            $usuario->update();
+
+            return json_encode($usuario);
+
+        }
+        else {
+            return abort(404, "Não Encontrado");
+        }
+
+
+        return json_encode($scoreNew);
 
     }
 

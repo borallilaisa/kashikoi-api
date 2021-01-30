@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Assunto;
 use App\Models\AssuntoUser;
 use App\Models\Conversas;
+use App\Models\Score_Usuario;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsuarioPerfil;
@@ -369,11 +370,31 @@ class UserController extends Controller
         return json_encode($users);
     }
 
+    public function retornaScore(Request $request) {
+
+        $q = $request->q;
+
+        $users = User::when($q, function ($query) use ($q) {
+            return $query->orWhere('name', 'like', "%{$q}%")->
+            orWhere('email', 'like', "%{$q}%");
+        })->
+        withTrashed()->
+        with(['usuario_perfil'])->get();
+
+        $users = $users ?: [];
+
+        return json_encode($users);
+    }
+
     public function softDeleteUser(Request $request) {
 
         $user = User::where('id', $request->id)->first();
         $conversas = Conversas::where('usuario_aluno',  $user->id)
             ->orWhere('usuario_professor',  $user->id)
+            ->get();
+
+        $score = Score_Usuario::where('idDestinatario',  $user->id)
+            ->orWhere('idRemetente',  $user->id)
             ->get();
 
         if($user) {
@@ -382,6 +403,10 @@ class UserController extends Controller
 
             foreach ($conversas as $conversas) {
                 $conversas->delete();
+            }
+
+            foreach ($score as $score) {
+                $score->delete();
             }
 
 
@@ -425,7 +450,7 @@ class UserController extends Controller
         $assuntos_users = $assunto->assunto_usuarios()->
                                     where('tipo', $tipo_assunto)->
                                     where('userID', '<>', $user->id)->
-                                    with(['usuario'])->get();
+                                    with(['usuario', 'usuario.usuario_perfil'])->get();
 
         return json_encode($assuntos_users);
 

@@ -194,7 +194,7 @@ public function getAllAssuntos(Request $request){
 
 
                 $assunto->deleted_at = null;
-                $assunto->save();
+                $assunto->savecomp();
 
                 return json_encode($assunto);
 

@@ -93,7 +93,7 @@ class AmizadeController extends Controller {
 
             $notification = new Notification();
 
-            $message = "O Usuário " . $friend->name . " deseja ser seu amigo!";
+            $message = "O Usuário " . $user->name . " deseja ser seu amigo!";
             $titulo = "Pedido de Amizade";
 
             $notification->new_friend(['mensagem' => $message, 'titulo' => $titulo, 'id_destinatario' => $friend->id, 'id_amigo' => $user->id]);

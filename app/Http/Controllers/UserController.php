@@ -7,6 +7,8 @@ use App\Models\Conversas;
 use App\Models\Score_Usuario;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Denuncia;
+use App\Models\Amizade;
 use App\Models\UsuarioPerfil;
 use App\Notifications\RecoverPassword;
 use Keygen;
@@ -389,24 +391,49 @@ class UserController extends Controller
     public function softDeleteUser(Request $request) {
 
         $user = User::where('id', $request->id)->first();
+
         $conversas = Conversas::where('usuario_aluno',  $user->id)
             ->orWhere('usuario_professor',  $user->id)
             ->get();
 
+
         $score = Score_Usuario::where('idDestinatario',  $user->id)
             ->orWhere('idRemetente',  $user->id)
+            ->get();
+
+        $denuncias = Denuncia::where('usuarioDenunciador',  $user->id)
+            ->orWhere('usuarioDenunciado',  $user->id)
+            ->get();
+
+        $assuntos = AssuntoUser::where('userID',  $user->id)
+
+            ->get();
+        $amizades = Amizade::where('id_usuario_1',  $user->id)
+            ->orWhere('id_usuario_2',  $user->id)
             ->get();
 
         if($user) {
 
             $user->delete();
 
-            foreach ($conversas as $conversas) {
-                $conversas->delete();
+            foreach ($conversas as $conversa) {
+                $conversa->delete();
             }
 
-            foreach ($score as $score) {
-                $score->delete();
+            foreach ($score as $item) {
+                $item->delete();
+            }
+
+            foreach ($assuntos as $assunto) {
+                $assunto->delete();
+            }
+
+            foreach ($denuncias as $denuncia) {
+                $denuncia->delete();
+            }
+
+            foreach ($amizades as $amizade) {
+                $amizade->delete();
             }
 
 
@@ -446,6 +473,8 @@ class UserController extends Controller
      * @return false|string
      */
     public function getUserByAssuntos(User $user, Assunto $assunto, $tipo_assunto, Request $request) {
+
+        $tipo_assunto = $tipo_assunto == 1 ? 2 : 1;
 
         $assuntos_users = $assunto->assunto_usuarios()->
                                     where('tipo', $tipo_assunto)->

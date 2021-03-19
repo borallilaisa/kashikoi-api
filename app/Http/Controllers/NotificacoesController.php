@@ -58,9 +58,11 @@ class NotificacoesController extends Controller {
      */
     public function refuseFriend(Notification $notification, Amizade $friendship, Request $request) {
 
-        $friendship->activeFirendship();
+    //    $friendship->refuseFirendship();
 
-        $notification->lido();
+        $notification->delete();
+        $friendship->delete();
+      //  $notification->lido();
 
         return json_encode($notification);
     }

@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Amizade extends Model
 {
+    use SoftDeletes;
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
@@ -36,7 +38,7 @@ class Amizade extends Model
     }
 
     public function refuseFirendship() {
-        $this->ativa = 2;
+        $this->ativa = 0;
 
         $this->save();
     }

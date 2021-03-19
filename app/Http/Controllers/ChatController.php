@@ -111,6 +111,7 @@ class ChatController extends Controller {
 
         $chats = Conversas::orWhere('usuario_aluno', $user->id)->
                             orWhere('usuario_professor', $user->id)->
+
                             with(['aluno', 'professor', 'assunto', 'mensagens' => function($query) {
                                 return $query->latest()->first();
                             }])->
@@ -129,12 +130,12 @@ class ChatController extends Controller {
 
         $config = $request->all();
 
-        $chat = Conversas::orWhere(function($query) use ($config) {
-                                    return $query->orWhere('usuario_aluno', $config['usuario_aluno'])->
+        $chat = Conversas::where(function($query) use ($config) {
+                                    return $query->where('usuario_aluno', $config['usuario_aluno'])->
                                                    orWhere('usuario_professor', $config['usuario_aluno']);
                                })->
-                               orWhere(function($query) use ($config) {
-                                    return $query->orWhere('usuario_aluno', $config['usuario_professor'])->
+                               where(function($query) use ($config) {
+                                    return $query->where('usuario_aluno', $config['usuario_professor'])->
                                                    orWhere('usuario_professor', $config['usuario_professor']);
                                })->
                                first();

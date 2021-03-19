@@ -144,7 +144,7 @@ class AssuntosController extends Controller
             return ["message" => $e];
         }
     }
-/*
+
 public function getAllAssuntos(Request $request){
         try{
             $q = $request->q;
@@ -161,15 +161,23 @@ public function getAllAssuntos(Request $request){
 
             return ["message" => $e];
         }
-}*/
+}
         public function softdeleteAssunto(Request $request){
                 try{
 
                     $assunto = Assunto::where('id', $request->id)->first();
 
+                    $relacionamentos = AssuntoUser::where('assuntoID',  $assunto->id)->get();
+
                     if($assunto) {
 
+
                         $assunto->delete();
+
+                        foreach ($relacionamentos as $relacionamento) {
+                            $relacionamento->delete();
+                        }
+
 
                         return json_encode($assunto->load(['assuntos']));
 
@@ -193,8 +201,8 @@ public function getAllAssuntos(Request $request){
             if($assunto) {
 
 
-                $assunto->deleted_at = null;
-                $assunto->savecomp();
+                $assunto->deleted_at = NULL;
+                $assunto->save();
 
                 return json_encode($assunto);
 

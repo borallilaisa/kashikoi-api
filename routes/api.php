@@ -1,5 +1,5 @@
 <?php
-use App\Http\middleware\CheckApiToken;
+use App\Http\Middleware\CheckApiToken;
 use Illuminate\Http\Request;
 
 header('Access-Control-Allow-Origin: *');

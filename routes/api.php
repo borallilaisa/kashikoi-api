@@ -17,7 +17,7 @@ Route::middleware([CheckApiToken::class])->group(function(){
     Route::get('/user/retorna-score',                           'UserController@retornaScore');
     Route::get( '/user/{user}',                                 'UserController@getUserById');
     Route::get( '/user/{user}/assuntos',                        'UserController@getAssuntosByUser');
-    Route::get( '/user/{user}/amigos',                          'AmizadeCOntroller@getAllFriendships');
+    Route::get( '/user/{user}/amigos',                          'AmizadeController@getAllFriendships');
     Route::get( '/user/{user}/listar/{assunto}/{tipo_assunto}', 'UserController@getUserByAssuntos');
     Route::post('/user/salvar-perfil',                          'UserController@salvarinfoPerfil');
     Route::post('/user/upload-foto',                            'UserController@uploadPhoto');

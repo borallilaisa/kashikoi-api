@@ -129,7 +129,7 @@ class DashboardController extends Controller {
 
         $month = Carbon::now()->subMonths(3);
 
-        $conversas = Conversas::select(DB::raw('COUNT(id) as total_data, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
+        $conversas = Conversas::select(DB::raw('ANY_VALUE(COUNT(id) as total_data), EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
         where('created_at', '>=', $month)->
         where('created_at', '<=', $actual_date)->
         groupBy('month')->

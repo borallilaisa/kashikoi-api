@@ -30,6 +30,7 @@ class DashboardController extends Controller {
         $conversas = Mensagem::select(DB::raw('COUNT(id) as total_data, EXTRACT(DAY from created_at) as dia, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
                                 where('created_at', '>=', $week)->
                                 where('created_at', '<=', $actual_date)->
+                                groupBy('total_data')->
                                 groupBy('dia')->
                                 groupBy('month')->
                                 groupBy('year')->
@@ -50,6 +51,7 @@ class DashboardController extends Controller {
         $amizades = Amizade::select(DB::raw('COUNT(id) as total_data, EXTRACT(DAY from created_at) as dia, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
         where('created_at', '>=', $week)->
         where('created_at', '<=', $actual_date)->
+        groupBy('total_data')->
         groupBy('dia')->
         groupBy('month')->
         groupBy('year')->
@@ -69,6 +71,7 @@ class DashboardController extends Controller {
         $usuario = User::select(DB::raw('COUNT(id) as total_data, EXTRACT(DAY from created_at) as dia, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
         where('created_at', '>=', $week)->
         where('created_at', '<=', $actual_date)->
+        groupBy('total_data')->
         groupBy('dia')->
         groupBy('month')->
         groupBy('year')->
@@ -89,6 +92,7 @@ class DashboardController extends Controller {
         $usuario = Denuncia::select(DB::raw('COUNT(id) as total_data, EXTRACT(DAY from created_at) as dia, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
         where('created_at', '>=', $week)->
         where('created_at', '<=', $actual_date)->
+        groupBy('total_data')->
         groupBy('dia')->
         groupBy('month')->
         groupBy('year')->
@@ -132,6 +136,7 @@ class DashboardController extends Controller {
         $conversas = Conversas::select(DB::raw('COUNT(id) as total_data, EXTRACT(MONTH from created_at) as month, EXTRACT(YEAR from created_at) as year'))->
         where('created_at', '>=', $month)->
         where('created_at', '<=', $actual_date)->
+        groupBy('total_data')->
         groupBy('month')->
         groupBy('year')->
         orderBy('created_at')->

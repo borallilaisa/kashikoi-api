@@ -19,7 +19,7 @@
         "laravel/tinker": "^1.0",
         "nesbot/carbon": "^2.43",
         "pusher/pusher-php-server": "^4.1",
-        "gd": "*"
+        "ext-gd": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",
